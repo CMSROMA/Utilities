@@ -1,0 +1,45 @@
+# lista della funzioni personali
+
+
+#------------------------------
+# funzione che dice se il path e' assoluto
+# controllo che il path sia un path assoluto:
+is_abspath(){
+    if [ "`echo $1 | sed 's|.*:||' | grep -c '^/'`" != "0" ]; then
+	return 0
+    else 
+	return 1
+    fi
+}
+
+
+
+#------------------------------
+# funzione che prende il parametro di una opzione del tipo
+#   --opt=parametro
+# uso: var=get_par() $i
+get_par(){
+    echo $1 | cut -d '=' -f 2
+}
+
+#------------------------------
+# funzione che prende la lista delle opzioni passate allo script
+
+# uso: get_optlist $@
+get_optlist(){
+    n=0        # per la filelist
+    n_opt=0    # per optlist
+    for i in "$@"
+    do
+    # /^-/ d eliminat tutti gli argomenti che iniziano per -
+      if [ -z "`echo $i | sed '/^-/ d'`" ]; then
+	  optionlist[n_opt]=$i
+	  let n_opt=$n_opt+1
+      # else
+      # filelist[$n]=$i
+      # let n=$n+1
+      fi
+    done
+}
+
+
