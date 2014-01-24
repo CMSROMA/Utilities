@@ -135,7 +135,8 @@ if [ -n "$CONTINUE" -a -e "$new_filel" ]; then
 fi
 
 if [ -z "$add" -a -e  "$new_file" ]; then
-    echo "error: file exist" >> /dev/stderr
+    echo "[ERROR] file $new_file exist" >> /dev/stderr
+    echo "        Try to remove it!"    >> /dev/stderr
     exit 1;
 #    mv $filelist_dir/$sample.list $filelist_dir/$sample.list-old
 fi
