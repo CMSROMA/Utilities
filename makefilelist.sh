@@ -30,13 +30,16 @@ filelist_dir=./filelist
 # in batch mode il puntatore alla chain si chiama: batch_chain
 
 usage(){
-    echo "`basename $0` sample directory [--add|check|-r]" >> /dev/stderr
+    echo "`basename $0` [option] sample directory " 
+    echo "--------- optional"
+    echo "    -g, --grep arg: merge files matching the argument"
     # tree_name e' il nome del tree dentro i root-file
     # chain_name e' il nome che voglio dare alla chain
     # directory e' il path in cui si trovano i root-file
     # con l'opzione batch la lista dei file viene spacchettata in piu' 
     #  chain, e il nome della chain e' batch_chain
 }
+
 
 get_par(){
     echo $1 | cut -d '=' -f 2
@@ -45,56 +48,41 @@ get_par(){
 
 recursive=no
 
+#------------------------------ parsing
+# options may be followed by one colon to indicate they have a required argument
+if ! options=$(getopt -u -o hacrpg:lf: -l help,grep: -- "$@")
+then
+    # something went wrong, getopt will put out an error message for us
+    exit 1
+fi
 
-while getopts hcrapg:lf: option
-  do
-  case $option in
-      h)
-	  usage
-	  exit 0
-	  ;;
-      a)
-	  echo "[OPTION] making filelist adding directory, if it is the same dir a new file will be created"
-	  add=yes
-	  ;;
-      c)
-          export CONTINUE="yes"  
-          ;;
-      r)
-	  echo "recursive"
-	  recursive=yes
-	  ;;
-      g)
-#	--grep=*)
-	  GREP=$OPTARG
-	  ;;
-      p)
-	  # configure python filelist for cmsRun
-	  PYTHON_CFG=yes
-	  ;;
-      l)
-	  LIST_OPT="true"
-	  ;;
-      f)
-	  echo "[OPTION] Filelist directory: $OPTARG"
-	  filelist_dir=$OPTARG
-	  ;;
-      *)
-	  echo -n "ERROR --> "
-	  usage
-	  exit 1
-          ;;
-  esac
+set -- $options
+
+while [ $# -gt 0 ]
+do
+    case $1 in
+	-h|--help) usage; exit 0;;
+	-a) 
+	    echo "[OPTION] making filelist adding directory, if it is the same dir a new file will be created"
+	    add=yes
+	    ;;
+	-c) export CONTINUE="yes";;
+	-r) echo "recursive"; recursive=yes;;
+      -g|--grep ) echo "[GREP OPTION]: $2"; GREP=$2;  shift;;
+      -p)  # configure python filelist for cmsRun
+	    PYTHON_CFG=yes
+	    ;;
+      -l) LIST_OPT="true";;
+      -f)
+	    echo "[OPTION] Filelist directory: $OPTARG"
+	    filelist_dir=$OPTARG
+	    ;;
+	(--) shift; break;;
+	(-*) echo "$0: error - unrecognized option $1" 1>&2; usage >> /dev/stderr; exit 1;;
+	(*) break;;
+    esac
+    shift
 done
-
-#while getopts "h" OPTIONS ; do
-#    case ${OPTIONS} in
-#        h|-help) echo "${usage}";;
-#    esac
-#done
-
-shift $(($OPTIND-1))
-
 
 case $# in 
     2)
@@ -112,7 +100,8 @@ case $# in
 	esac
 	;;
     *)
-	echo -n "[ERROR] "
+	echo  "[ERROR] Wrong number of parameters: $#"
+	echo  "Usage:"
 	usage
 	exit 1
 	;;
@@ -200,10 +189,10 @@ if [ "${#filelist_[@]}" = "0" ]; then
 fi
 
     # elimino le directory, prendo i rootfile, ne prendo il nome, ci metto aggiungo il path
-if [ -z "$GREP" ]; then
-    $dir_command $dir | sed "/^d/ d" | grep '.root' | awk '(NF!=0){print $9}' | sed "s|^|$file_prefix$dir/|" >> $new_file.1
+if [ -z "${GREP}" ]; then
+    $dir_command $dir | sed "/^d/ d" | grep '.root' | awk '(NF!=0){print $9,$5}' | sed "s|^|$file_prefix$dir/|" >> $new_file.1
 else
-    $dir_command $dir | grep -e "$GREP" | sed "/^d/ d" | grep '.root' | awk '(NF!=0){print $9}' | sed "s|^|$file_prefix$dir/|" >> $new_file.1
+    $dir_command $dir | sed "/^d/ d" | grep -e "${GREP}.*root" | awk '(NF!=0){print $9,$5}' | sed "s|^|$file_prefix$dir/|" >> $new_file.1
 fi
 #else 
 #    echo "file list reading"
@@ -232,8 +221,8 @@ if [ -z "$REMDUP" ];then
     exit 1
 fi
 awk -f $REMDUP $new_file.1 | \
-   sed '/^$/ d'  |sort > $new_file.2
-
+   sed '/^$/ d;s|\t.*$||;s| .*||'  |sort > $new_file.2
+cp $new_file.1 $new_file.dump
 
 # rimuovo i duplicati di castor, tolgo le righe vuote, tolgo i file da escludere
 if [ -n "$add"  ];then
