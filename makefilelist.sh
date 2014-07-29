@@ -59,29 +59,26 @@ fi
 set -- $options
 
 while [ $# -gt 0 ]
-do
-    case $1 in
-	-h|--help) usage; exit 0;;
-	-a) 
-	    echo "[OPTION] making filelist adding directory, if it is the same dir a new file will be created"
-	    add=yes
-	    ;;
-	-c) export CONTINUE="yes";;
-	-r) echo "recursive"; recursive=yes;;
+  do
+  case $1 in
+      -h|--help) usage; exit 0;;
+      -a) 
+	  echo "[OPTION] making filelist adding directory, if it is the same dir a new file will be created"
+	  add=yes
+	  ;;
+      -c) export CONTINUE="yes";;
+      -r) echo "recursive"; recursive=yes;;
       -g|--grep ) echo "[GREP OPTION]: $2"; GREP=$2;  shift;;
       -p)  # configure python filelist for cmsRun
-	    PYTHON_CFG=yes
-	    ;;
+	  PYTHON_CFG=yes
+	  ;;
       -l) LIST_OPT="true";;
-      -f)
-	    echo "[OPTION] Filelist directory: $OPTARG"
-	    filelist_dir=$OPTARG
-	    ;;
-	(--) shift; break;;
-	(-*) echo "$0: error - unrecognized option $1" 1>&2; usage >> /dev/stderr; exit 1;;
+      -f) echo "[OPTION] Filelist directory: $2"; filelist_dir=$2; shift;;
+      (--) shift; break;;
+      (-*) echo "$0: error - unrecognized option $1" 1>&2; usage >> /dev/stderr; exit 1;;
 	(*) break;;
-    esac
-    shift
+  esac
+  shift
 done
 
 case $# in 
