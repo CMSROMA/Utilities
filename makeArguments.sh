@@ -10,6 +10,7 @@ usage(){
 if ! options=$(getopt -u -o hf:n:u: -l help,filelist:,file_per_job:,nJobs:,ui_working_dir:,parentFilelist: -- "$@")
 then
     # something went wrong, getopt will put out an error message for us
+	usage
     exit 1
 fi
 
