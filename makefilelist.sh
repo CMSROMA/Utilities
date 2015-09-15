@@ -223,12 +223,17 @@ cp $new_file.1 $new_file.dump
 
 # rimuovo i duplicati di castor, tolgo le righe vuote, tolgo i file da escludere
 if [ -n "$add"  ];then
-    echo "Adding old filelist to the new one to remove duplicates"
+	if [ ! -e "${new_file}" ];then
+		cp ${new_file}.2 ${new_file}
+	else
+#    echo "Adding old filelist to the new one to remove duplicates"
+#	echo ${new_file}.2 $new_file
     diff $new_file.2 $new_file  > $new_file.diff
     if [ "`cat $new_file.diff | wc -l `" == "0" ];then
 	rm $new_file.diff $new_file.1 $new_file.2
 	exit 0
     fi
+	fi 
     if [ "`grep -c '<' $new_file.diff`" != "0" ]; then
 	echo "[WARNING] Missing file for sample $sample!"
 	echo "          Look at $new_file.missingDiff"
