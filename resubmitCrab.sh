@@ -203,7 +203,8 @@ done
 
 if [ -n "$intervals" ];then
 	#echo "Intervals $intervals"
-    crab -c $ui_working_dir/ -resubmit `echo $intervals | sed 's| |\n|g' | awk -f $CMSSW_BASE/src/Calibration/EcalAlCaRecoProducers/awk/compact.awk | sed 's|,$||'`
+#    crab -c $ui_working_dir/ -resubmit `echo $intervals | sed 's| |\n|g' | awk -f $CMSSW_BASE/src/Calibration/EcalAlCaRecoProducers/awk/compact.awk | sed 's|,$||'`
+    crab -c $ui_working_dir/ -resubmit `echo $intervals | sed 's| |\n|g' | awk -f $HOME/bin/awk/compact.awk | sed 's|,$||'`
 #echo $intervals | sed 's| |\n|g' | awk -f $CMSSW_BASE/src/Calibration/EcalAlCaRecoProducers/awk/compact.awk | sed 's|,$||'
 else
 	#echo "okJobList $okJobList: `echo $okJobList | wc -w` $nJobs"
