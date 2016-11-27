@@ -29,7 +29,7 @@ fi
 
 isCrab=`head -1 $file | awk '{if(match($0,"_[0-9]*_[0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z]\.root")){print 0}}'` 
 if [ "$isCrab" != "0" ]; then
-    echo "Warning: not a file produced by crab. Filelist not sorted" > /dev/stderr
+    echo "[WARNING `basename $0`] $file not a file produced by crab. Filelist not sorted" >> /dev/stderr
     exit 2;
 fi
 
@@ -39,7 +39,7 @@ FS="_"
 # indice del job
 index=`head -1 $file | awk -F $FS '(NF!=0){print NF-2}'`
 
-sort -t $FS -k $index -n $file > tmpfile
-mv tmpfile $file
+sort -t $FS -k $index -n $file > $file.crabsort
+mv $file.crabsort $file
 
 exit 0

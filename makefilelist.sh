@@ -253,7 +253,7 @@ fi
 rm $new_file.1
 
 
-sortCrabFilelist.sh $new_file
+sortCrabFilelist.sh $new_file #|| exit 2
 
 if [ -n "$PYTHON_CFG" ]; then
     echo 'myfilelist.extend( [' > $filelist_dir/$sample'_cff.py'
