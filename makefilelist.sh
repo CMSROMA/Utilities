@@ -140,19 +140,19 @@ case $dir in
 	   ;;
     root://*eos*)
 	   echo "[INFO] Files on xrootd server"
-	   dir_command='/afs/cern.ch/project/eos/installation/pro/bin/eos.select ls -l'
+	   dir_command='eos ls -l'
 	   file_prefix="root://eoscms.cern.ch/"
 	   dir=`echo $dir | sed 's|root://eoscms.*//eos|/eos|'`
 	   ;;
 
     /store/*)
-	   dir_command='/afs/cern.ch/project/eos/installation/pro/bin/eos.select ls -l'
+	   dir_command='eos ls -l'
 	   file_prefix="root://eoscms.cern.ch/"
 	   dir_prefix="/eos/cms"
 	   ;;
 
     *eos*)
-	   dir_command='/afs/cern.ch/project/eos/installation/pro/bin/eos.select ls -l'
+	   dir_command='eos ls -l'
 	   file_prefix="root://eoscms.cern.ch/"
 	   ;;
 
